@@ -76,12 +76,13 @@ def upload_pdf_file(uploaded_file):
         return None
 
 
-def query_rag_backend(query_text, k=4, groq_key=None):
+def query_rag_backend(query_text, k=4, groq_key=None, model=None):
     """Sends user question to FastAPI /ask endpoint."""
     payload = {
         "query": query_text,
         "k": k,
-        "groq_api_key": groq_key if groq_key else None
+        "groq_api_key": groq_key if groq_key else None,
+        "model": model
     }
     try:
         response = requests.post(f"{API_BASE_URL}/ask", json=payload, timeout=60)
@@ -101,13 +102,19 @@ with st.sidebar:
     st.markdown("---")
 
     # API Key Configuration
-    st.subheader("🔑 Credentials")
+    st.subheader("🔑 Credentials & Model")
     env_groq_key = os.getenv("GROQ_API_KEY", "")
     user_groq_key = st.text_input(
         "Groq API Key",
         value=env_groq_key,
         type="password",
         help="Free API key from console.groq.com. If set in .env, it auto-fills here."
+    )
+    selected_model = st.selectbox(
+        "Groq LLM Model",
+        options=["openai/gpt-oss-120b", "openai/gpt-oss-20b", "qwen/qwen3.8-27b", "llama-3.3-70b-versatile"],
+        index=0,
+        help="Select the LLM model to query via Groq"
     )
 
     st.markdown("---")
@@ -235,7 +242,8 @@ if user_query:
             response_data = query_rag_backend(
                 query_text=user_query,
                 k=top_k,
-                groq_key=user_groq_key
+                groq_key=user_groq_key,
+                model=selected_model
             )
             answer_text = response_data.get("answer", "No answer received.")
             sources_list = response_data.get("sources", [])

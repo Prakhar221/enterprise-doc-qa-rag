@@ -25,7 +25,7 @@ load_dotenv()
 
 INDEX_DIR = os.path.join(os.path.dirname(__file__), "faiss_index")
 EMBEDDING_MODEL_NAME = "sentence-transformers/all-MiniLM-L6-v2"
-DEFAULT_GROQ_MODEL = "llama-3.3-70b-versatile"
+DEFAULT_GROQ_MODEL = os.getenv("GROQ_MODEL", "openai/gpt-oss-120b")
 
 # Strict enterprise system prompt designed to prevent hallucinations
 SYSTEM_PROMPT = """You are an enterprise AI assistant answering questions strictly based on uploaded company documents.
@@ -141,7 +141,7 @@ class RAGEngine:
             "total_chunks_in_index": self.total_chunks
         }
 
-    def query(self, question: str, k: int = 4, custom_api_key: Optional[str] = None) -> Dict[str, Any]:
+    def query(self, question: str, k: int = 4, custom_api_key: Optional[str] = None, model_name: Optional[str] = None) -> Dict[str, Any]:
         """
         Phase 2: Query & Answer Generation
         1. Embed user question using all-MiniLM-L6-v2
@@ -190,10 +190,12 @@ class RAGEngine:
 
         formatted_context = "\n\n---\n\n".join(context_blocks)
 
+        chosen_model = model_name or os.getenv("GROQ_MODEL", DEFAULT_GROQ_MODEL)
+
         # 3 & 4: Prompt Augmentation & Groq LLM Inference (temperature=0)
         try:
             llm = ChatGroq(
-                model_name=DEFAULT_GROQ_MODEL,
+                model_name=chosen_model,
                 temperature=0.0,
                 groq_api_key=api_key,
                 max_retries=2

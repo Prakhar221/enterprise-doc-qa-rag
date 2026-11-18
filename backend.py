@@ -41,6 +41,7 @@ class QueryRequest(BaseModel):
     query: str = Field(..., description="The user's question about the uploaded documents", min_length=1)
     k: int = Field(default=4, description="Number of most relevant chunks to retrieve", ge=1, le=10)
     groq_api_key: Optional[str] = Field(default=None, description="Optional custom Groq API Key")
+    model: Optional[str] = Field(default=None, description="Optional Groq model name")
 
 
 class SourceItem(BaseModel):
@@ -138,7 +139,8 @@ def ask_question(payload: QueryRequest):
         result = engine.query(
             question=payload.query,
             k=payload.k,
-            custom_api_key=payload.groq_api_key
+            custom_api_key=payload.groq_api_key,
+            model_name=payload.model
         )
         return QueryResponse(
             answer=result["answer"],
