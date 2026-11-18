@@ -70,7 +70,7 @@ enterprise-doc-qa-rag/
 
 ### 1. Clone the Repository
 ```bash
-git clone https://github.com/your-username/enterprise-doc-qa-rag.git
+git clone https://github.com/Prakhar221/enterprise-doc-qa-rag.git
 cd enterprise-doc-qa-rag
 ```
 
