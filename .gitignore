@@ -1,0 +1,25 @@
+# Virtual environment
+venv/
+env/
+.venv/
+
+# Python cache
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.pytest_cache/
+
+# Environment variables & secrets
+.env
+*.env.local
+
+# FAISS Vector Storage & Temp files
+faiss_index/
+uploaded_docs/
+temp/
+*.pdf
+
+# Operating system files
+.DS_Store
+Thumbs.db
