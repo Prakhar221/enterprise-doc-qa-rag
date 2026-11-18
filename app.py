@@ -153,9 +153,18 @@ with st.sidebar:
             st.metric("Total Chunks", status_info.get("total_chunks", 0))
         with col2:
             st.metric("Indexed", "Yes" if status_info.get("is_indexed") else "No")
-        
+
         st.caption(f"**Embedding Model:** `{status_info.get('embedding_model')}`")
         st.caption(f"**LLM:** `{status_info.get('llm_model')}`")
+
+        # Reranker badge
+        if status_info.get("reranker_active"):
+            st.markdown(
+                f"🔁 **Reranker Active:** `{status_info.get('reranker_model', '')}`\n\n"
+                f"FAISS recalls **Top-{status_info.get('retrieval_k', 20)}** → Reranked to **Top-{status_info.get('reranked_top_k', 4)}**",
+            )
+        else:
+            st.caption("🔁 **Reranker:** Disabled")
 
         if st.button("🗑️ Reset Knowledge Base", use_container_width=True):
             try:
@@ -172,7 +181,7 @@ with st.sidebar:
 
     st.markdown("---")
     # Search parameters
-    top_k = st.slider("Top-K Chunks to Retrieve", min_value=1, max_value=8, value=4)
+    top_k = st.slider("Top-K Final Chunks (after reranking)", min_value=1, max_value=8, value=4)
 
 
 # --- MAIN INTERFACE ---

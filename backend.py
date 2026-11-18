@@ -49,6 +49,7 @@ class SourceItem(BaseModel):
     page: int
     snippet: str
     score: Optional[float] = None
+    reranked: Optional[bool] = False
 
 
 class QueryResponse(BaseModel):
@@ -62,6 +63,10 @@ class StatusResponse(BaseModel):
     total_chunks: int
     indexed_files: List[str]
     embedding_model: str
+    reranker_model: Optional[str] = None
+    reranker_active: Optional[bool] = False
+    retrieval_k: Optional[int] = None
+    reranked_top_k: Optional[int] = None
     llm_model: str
 
 
@@ -84,6 +89,10 @@ def get_status():
         total_chunks=info["total_chunks"],
         indexed_files=info["indexed_files"],
         embedding_model=info["embedding_model"],
+        reranker_model=info.get("reranker_model"),
+        reranker_active=info.get("reranker_active", False),
+        retrieval_k=info.get("retrieval_k"),
+        reranked_top_k=info.get("reranked_top_k"),
         llm_model=info["llm_model"]
     )
 
